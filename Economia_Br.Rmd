@@ -1,0 +1,118 @@
+---
+title: "Economia_Br"
+author: "Andre Masuko"
+date: "6/2/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(tidyverse)
+library(readxl)
+library(stargazer)
+economia <- read_excel("econ_br.xlsx")
+```
+
+```{r, echo=FALSE}
+economia1<- economia %>%
+  select(Ano, Gini, Pobreza, Desemprego, Bolsa_Familia)
+kable(head(economia1), "pipe", align = rep('c', 5), caption = "Amostra da série histórica analisada (Fonte: Banco Mundial e IPEA Data)", col.name = c("Ano", "Índice Gini", "Índice de Pobreza", "Índice de Desemprego", "Bolsa Família"))
+
+model_1 <- lm(Gini ~ Bolsa_Familia + Inflacao + PIB, data = economia)
+model_2 <- lm(Pobreza ~ Bolsa_Familia + Inflacao + PIB, data = economia)
+model_3 <- lm(Desemprego ~ Bolsa_Familia + Inflacao + PIB, data = economia)
+
+ggplot(data = economia) +
+  geom_point(mapping = aes(x = Ano, y = Pobreza), colour = "steelblue") + 
+  geom_line(mapping = aes(x = Ano, y = Pobreza, group = 1), colour = "steelblue") +
+  geom_vline(xintercept = 16, colour = "blue") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  ggtitle("O Impacto do Bolsa Família no Índice de Pobreza (1988-2011)") +
+  labs(caption = "Fonte: Banco Mundial (2019)",
+       subtitle = "% da população brasileira que vive com até 1.90U$ por dia",
+       x = " ",
+       y = "Índice de Pobreza") 
+
+ggplot(data = economia) +
+  geom_point(mapping = aes(x = Ano, y = Gini), colour = "steelblue") + 
+  geom_line(mapping = aes(x = Ano, y = Gini, group = 1), colour = "steelblue") +
+  geom_vline(xintercept = 16, colour = "blue") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  ggtitle("O Impacto do Bolsa Família no Índice Gini (1988-2011)") +
+  labs(caption = "Fonte: Banco Mundial (2019)",
+       subtitle = "Quanto menor o Índice Gini, menor o nível de desigualdade",
+       x = " ",
+       y = "Índice Gini")
+
+ggplot(data = economia) +
+  geom_point(mapping = aes(x = Ano, y = Desemprego), colour = "steelblue") +
+  geom_line(mapping = aes(x = Ano, y = Desemprego, group = 1), colour = "steelblue") +
+  geom_vline(xintercept = 16, colour = "blue") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  ggtitle("O Impacto do Bolsa Família no Índice de Desemprego (1988-2011)") +
+  labs(caption = "Fonte: IPEA Data (2017)",
+       subtitle = "% de cidadãos que procuraram, mas não encontraram ocupação profissional",
+       x = " ",
+       y = "Índice de Desemprego")
+
+ggplot(data = economia) +
+  geom_point(mapping = aes(x = Ano, y = Desemprego), colour = "steelblue") +
+  geom_line(mapping = aes(x = Ano, y = Desemprego, group = 1), colour = "steelblue") +
+  geom_vline(xintercept = c(3, 5, 8, 16), colour = "blue") +
+    geom_text(aes(x=3, label = "Collor", y=9), size = 3, angle=90, vjust = -1) +
+      geom_text(aes(x=5, label = "Itamar", y=9), size = 3, angle=90, vjust = -1) +
+      geom_text(aes(x=8, label = "FHC", y=9), size = 3, angle=90, vjust = -1) +    geom_text(aes(x=16, label = "Lula", y=9), size = 3, angle=90, vjust = -1) +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  ggtitle("Presidentes do Brasil e a Evolução no Índice de Desemprego (1988-2011)") +
+  labs(caption = "Fonte: IPEA Data (2017)",
+       subtitle = "Linhas verticais marcam o início de cada mandato presidencial",
+       x = " ",
+       y = "Índice de Desemprego")
+
+ggplot(data = economia) +
+  geom_point(mapping = aes(x = Ano, y = Gini), colour = "steelblue") + 
+  geom_line(mapping = aes(x = Ano, y = Gini, group = 1), colour = "steelblue") +
+  geom_vline(xintercept = c(3, 5, 8, 16), colour = "blue") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  ggtitle("Presidentes do Brasil e a Evolução no Índice Gini (1988-2011)") +
+  labs(caption = "Fonte: Banco Mundial (2019)",
+       subtitle = "Linhas verticais marcam o início de cada mandato presidencial",
+       x = " ",
+       y = "Índice Gini") +
+  geom_text(aes(x=3, label = "Collor", y=.55), size = 3, angle=90, vjust = -1) +
+      geom_text(aes(x=5, label = "Itamar", y=.55), size = 3, angle=90, vjust = -1) +
+      geom_text(aes(x=8, label = "FHC", y=.55), size = 3, angle=90, vjust = -1) +    geom_text(aes(x=16, label = "Lula", y=.55), size = 3, angle=90, vjust = -1)
+
+ggplot(data = economia) +
+  geom_point(mapping = aes(x = Ano, y = Pobreza), colour = "steelblue") + 
+  geom_line(mapping = aes(x = Ano, y = Pobreza, group = 1), colour = "steelblue") +
+  geom_vline(xintercept = c(3, 5, 8, 16), colour = "blue") +
+  theme_minimal() + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  ggtitle("Presidentes do Brasil e a Evolução no Índice de Pobreza (1988-2011)") +
+  labs(caption = "Fonte: Banco Mundial (2019)",
+       subtitle = "Linhas verticais marcam o início de cada mandato presidencial",
+       x = " ",
+       y = "Índice de Pobreza") +
+  geom_text(aes(x=3, label = "Collor", y = 7.5), size = 3, angle = 90, vjust = -1) +
+      geom_text(aes(x=5, label = "Itamar", y = 7.5), size = 3, angle = 90, vjust = -1) +
+      geom_text(aes(x=8, label = "FHC", y = 7.5), size = 3, angle = 90, vjust = -1) +    geom_text(aes(x=16, label = "Lula", y = 7.5), size = 3, angle = 90, vjust = -1)
+```
+
+```{r, echo=FALSE, include=FALSE}
+stargazer(
+  model_1,
+  model_2,
+  model_3,
+  type = "html",
+  out = "econ_table.html",
+  title = "Resultados Estatisticos",
+  notes.label = "Peso Estatistico",
+  covariate.labels = c("Efeito do Bolsa Familia")) 
+```
+
